@@ -5,6 +5,7 @@ import static playn.core.PlayN.*;
 import playn.core.Game;
 import playn.core.Image;
 import playn.core.ImageLayer;
+import playn.core.gl.GLContext;
 
 public class MyGame implements Game {
 	Screen screen;
