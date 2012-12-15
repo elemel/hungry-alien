@@ -11,10 +11,6 @@ public class MyGame implements Game {
 
 	@Override
 	public void init() {
-		// create and add background image layer
-		// Image bgImage = assets().getImage("images/bg.png");
-		// ImageLayer bgLayer = graphics().createImageLayer(bgImage);
-		// graphics().rootLayer().add(bgLayer);
 		screen = new PlanetScreen();
 		screen.init();
 	}

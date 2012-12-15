@@ -11,19 +11,17 @@ import playn.core.Surface;
 import playn.core.SurfaceLayer;
 
 class PlanetScreen implements Screen {
-	private SurfaceLayer surface;
+	private SurfaceLayer layer;
 	private CanvasImage skyImage;
 	private CanvasImage planetImage;
 	  
 	@Override
 	public void init() {
-		// create a surface
 	    int width = graphics().width();
 	    int height = graphics().height();
-	    surface = graphics().createSurfaceLayer(width, height);
-	    graphics().rootLayer().add(surface);
+	    layer = graphics().createSurfaceLayer(width, height);
+	    graphics().rootLayer().add(layer);
 
-	    // create a solid background
 	    skyImage = graphics().createImage(width, height);
 	    Canvas canvas = skyImage.canvas();
 	    canvas.setFillColor(0xff0099cc);
@@ -32,7 +30,6 @@ class PlanetScreen implements Screen {
 	    float pixelsPerMeter = 10.0f;
 	    float planetRadius = 100.0f;
 	    
-	    // create a circle
 	    int planetRadiusInPixels = (int) (planetRadius * pixelsPerMeter);
 	    int circleX = 0;
 	    int circleY = 0;
@@ -49,10 +46,10 @@ class PlanetScreen implements Screen {
 	public void paint(float alpha) {
 	    int width = graphics().width();
 	    int height = graphics().height();
-		Surface s = surface.surface();
-	    s.clear();
-	    s.drawImage(skyImage, 0, 0);
-	    s.drawImage(planetImage, 0, height - planetImage.height());
+		Surface surface = layer.surface();
+		surface.clear();
+		surface.drawImage(skyImage, 0, 0);
+		surface.drawImage(planetImage, 0, height - planetImage.height());
 	}
 
 	@Override
