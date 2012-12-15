@@ -7,25 +7,30 @@ import playn.core.Image;
 import playn.core.ImageLayer;
 
 public class MyGame implements Game {
-  @Override
-  public void init() {
-    // create and add background image layer
-    Image bgImage = assets().getImage("images/bg.png");
-    ImageLayer bgLayer = graphics().createImageLayer(bgImage);
-    graphics().rootLayer().add(bgLayer);
-  }
+	Screen screen;
 
-  @Override
-  public void paint(float alpha) {
-    // the background automatically paints itself, so no need to do anything here!
-  }
+	@Override
+	public void init() {
+		// create and add background image layer
+		// Image bgImage = assets().getImage("images/bg.png");
+		// ImageLayer bgLayer = graphics().createImageLayer(bgImage);
+		// graphics().rootLayer().add(bgLayer);
+		screen = new PlanetScreen();
+		screen.init();
+	}
 
-  @Override
-  public void update(float delta) {
-  }
+	@Override
+	public void paint(float alpha) {
+		screen.paint(alpha);
+	}
 
-  @Override
-  public int updateRate() {
-    return 25;
-  }
+	@Override
+	public void update(float delta) {
+		screen.update(delta);
+	}
+
+	@Override
+	public int updateRate() {
+		return 25;
+	}
 }
