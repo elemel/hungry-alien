@@ -8,10 +8,12 @@ import playn.core.ImageLayer;
 import playn.core.gl.GLContext;
 
 public class MyGame implements Game {
-	Screen screen;
+	private Screen screen;
 
 	@Override
 	public void init() {
+		// graphics().ctx().setTextureFilter(GLContext.Filter.NEAREST, GLContext.Filter.NEAREST);
+		
 		screen = new PlanetScreen();
 		screen.init();
 	}
