@@ -5,12 +5,19 @@ import java.util.*;
 import playn.core.*;
 
 public class GameState {
+	private ResourceCache resourceCache;
+
 	private GroupLayer rootLayer;
+	private GroupLayer atmosphereLayer;
 	private GroupLayer backgroundLayer;
+	private GroupLayer planetLayer;
 	private GroupLayer foregroundLayer;
 	private GroupLayer vegetationLayer;
+	private GroupLayer tractorBeamLayer;
 	private GroupLayer animalLayer;
+	private GroupLayer vehicleLayer;
 	private GroupLayer alienShipLayer;
+	private GroupLayer bulletLayer;
 
 	private float time;
 
@@ -32,8 +39,12 @@ public class GameState {
 
 	private HashSet<Key> pressedKeys = new HashSet<Key>();
 
-	private boolean adultMode = true;
+	private boolean adultMode = false;
 	
+	public GameState(ResourceCache resourceCache) {
+		this.resourceCache = resourceCache;
+	}
+
 	public void init() {
 		int width = PlayN.graphics().width();
 	    int height = PlayN.graphics().height();
@@ -42,17 +53,27 @@ public class GameState {
 	    
 	    rootLayer = PlayN.graphics().createGroupLayer();
 	    PlayN.graphics().rootLayer().add(rootLayer);
+	    atmosphereLayer = PlayN.graphics().createGroupLayer();
+	    rootLayer.add(atmosphereLayer);
 	    backgroundLayer = PlayN.graphics().createGroupLayer();
 	    rootLayer.add(backgroundLayer);
+	    planetLayer = PlayN.graphics().createGroupLayer();
+	    rootLayer.add(planetLayer);
 	    foregroundLayer = PlayN.graphics().createGroupLayer();
 	    rootLayer.add(foregroundLayer);
 
 	    vegetationLayer = PlayN.graphics().createGroupLayer();
-	    foregroundLayer.add(vegetationLayer);
+	    backgroundLayer.add(vegetationLayer);
+	    tractorBeamLayer = PlayN.graphics().createGroupLayer();
+	    backgroundLayer.add(tractorBeamLayer);
 	    animalLayer = PlayN.graphics().createGroupLayer();
 	    foregroundLayer.add(animalLayer);
 	    alienShipLayer = PlayN.graphics().createGroupLayer();
 	    foregroundLayer.add(alienShipLayer);
+	    bulletLayer = PlayN.graphics().createGroupLayer();
+	    foregroundLayer.add(bulletLayer);
+	    vehicleLayer = PlayN.graphics().createGroupLayer();
+	    foregroundLayer.add(vehicleLayer);
 	}
 
 	public void exit() {
@@ -61,6 +82,10 @@ public class GameState {
 		}
 
 		PlayN.graphics().rootLayer().remove(rootLayer);
+	}
+	
+	public ResourceCache getResourceCache() {
+		return resourceCache;
 	}
 	
 	public boolean isAdultMode() {
@@ -130,8 +155,11 @@ public class GameState {
 		int width = PlayN.graphics().width();
 	    int height = PlayN.graphics().height();
 
-	    int planetRadiusInPixels = (int) (planetRadius * pixelsPerMeter + 0.5f);		
-	    foregroundLayer.setTranslation((float) (width / 2), (float) (height * 3 / 4 + planetRadiusInPixels));
+	    float planetRadiusInPixels = planetRadius * pixelsPerMeter;
+	    float translationX = 0.5f * (float) width;
+	    float translationY = 0.75f * (float) height + planetRadiusInPixels;
+	    backgroundLayer.setTranslation(translationX, translationY);
+	    foregroundLayer.setTranslation(translationX, translationY);
 		for (Actor actor : actors) {
 			if (actor != null) {
 				actor.paint(alpha);
@@ -151,8 +179,8 @@ public class GameState {
 		}
 		actors.remove(null);
 
-		// cameraPolarPosition += (alienShipPolarPosition + 0.75f * alienShipPolarVelocity - cameraPolarPosition) * 5.0f * delta * 0.001f;
 		cameraPolarPosition += (alienShipPolarPosition - cameraPolarPosition) * 5.0f * delta * 0.001f;
+		backgroundLayer.setRotation(-cameraPolarPosition);
 		foregroundLayer.setRotation(-cameraPolarPosition);
 	}
 
@@ -160,13 +188,17 @@ public class GameState {
 		return time;
 	}
 	
-	public GroupLayer getBackgroundLayer() {
-		return backgroundLayer;
+	public GroupLayer getAtmosphereLayer() {
+		return atmosphereLayer;
 	}
 
-//	public GroupLayer getForegroundLayer() {
-//		return foregroundLayer;
-//	}
+	public GroupLayer getPlanetLayer() {
+		return planetLayer;
+	}
+
+	public GroupLayer getTractorBeamLayer() {
+		return tractorBeamLayer;
+	}
 
 	public GroupLayer getVegetationLayer() {
 		return vegetationLayer;
@@ -176,8 +208,16 @@ public class GameState {
 		return animalLayer;
 	}
 
+	public GroupLayer getVehicleLayer() {
+		return vehicleLayer;
+	}
+
 	public GroupLayer getAlienShipLayer() {
 		return alienShipLayer;
+	}
+
+	public GroupLayer getBulletLayer() {
+		return bulletLayer;
 	}
 
 	public float getPixelsPerMeter() {

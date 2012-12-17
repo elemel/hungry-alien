@@ -1,36 +1,61 @@
 package se.elemel.ld25.core;
 
 import playn.core.*;
+import java.util.*;
 
 public class PlanetScreen implements Screen {
+	private MyGame game;
+	private ResourceCache resourceCache;
 	private GameState state;
 
-	private SurfaceLayer layer;
-	private CanvasImage skyImage;
+	private SurfaceLayer atmosphereSurfaceLayer;
+	private CanvasImage atmosphereImage;
+	private SurfaceLayer planetSurfaceLayer;
 	private CanvasImage planetImage;
+	private Image treeImage;
+	private ArrayList<ImageLayer> treeImageLayers = new ArrayList<ImageLayer>();
 
+	public PlanetScreen(MyGame game) {
+		this.game = game;
+		this.resourceCache = game.getResourceCache();
+	}
+	
 	@Override
 	public void init() {
-		state = new GameState();
+		state = new GameState(resourceCache);
 		state.init();
+
+		treeImage = resourceCache.getImage("tree");
 
 		int width = PlayN.graphics().width();
 	    int height = PlayN.graphics().height();
 
-	    layer = PlayN.graphics().createSurfaceLayer(width, height);
-	    state.getBackgroundLayer().add(layer);
+	    atmosphereSurfaceLayer = PlayN.graphics().createSurfaceLayer(width, height);
+	    state.getAtmosphereLayer().add(atmosphereSurfaceLayer);
+	    planetSurfaceLayer = PlayN.graphics().createSurfaceLayer(width, height);
+	    state.getPlanetLayer().add(planetSurfaceLayer);
 
 		state.addActor(new AlienShipActor(state, 0.0f));
-		state.addActor(new LandAnimalActor(state, 0.0f, LandAnimalActor.Type.COW));
-		state.addActor(new LandAnimalActor(state, 1.0f, LandAnimalActor.Type.SHEEP));
-		state.addActor(new LandAnimalActor(state, -1.0f, LandAnimalActor.Type.HORSE));
-		state.addActor(new LandAnimalActor(state, -2.0f, LandAnimalActor.Type.PIG));
-
-		int treeCount = 20;
+		
+		int treeCount = 10;
 		for (int i = 0; i < treeCount; ++i) {
 			float polarPosition = 2.0f * (float) Math.PI * (float) i / (float) treeCount +
-					2.0f * (float) Math.PI * PlayN.random() / (float) treeCount;
+					2.0f * (float) Math.PI * (PlayN.random() - 0.5f) / (float) treeCount;
 			createTree(polarPosition);
+		}
+		
+		int animalCount = 20;
+		for (int i = 0; i < animalCount; ++i) {
+			float polarPosition = 2.0f * (float) Math.PI * (float) i / (float) animalCount +
+					2.0f * (float) Math.PI * (PlayN.random() - 0.5f) / (float) animalCount;
+			createAnimal(polarPosition);
+		}
+
+		int vehicleCount = 10;
+		for (int i = 0; i < vehicleCount; ++i) {
+			float polarPosition = (float) Math.PI / 4.0f + 3.0f / 2.0f * (float) Math.PI * (float) i / (float) vehicleCount +
+					(float) Math.PI * (PlayN.random() - 0.5f) / (float) vehicleCount;
+			state.addActor(new VehicleActor(state, polarPosition));
 		}
 		
 	    float planetRadiusInPixels = state.getPlanetRadius() * state.getPixelsPerMeter() + 0.5f;
@@ -42,6 +67,11 @@ public class PlanetScreen implements Screen {
 	    PlayN.keyboard().setListener(new Keyboard.Adapter() {
 	    	@Override
 	    	public void onKeyDown(Keyboard.Event event) {
+	    		if (event.key() == Key.BACKSPACE || event.key() == Key.ESCAPE) {
+	    			game.setScreen(new TitleScreen(game));
+	    			return;
+	    		}
+
 	    		state.setKeyPressed(event.key(), true);
 	    	}
 
@@ -51,37 +81,45 @@ public class PlanetScreen implements Screen {
 	    	}
 	    });
 
-	    skyImage = PlayN.graphics().createImage(width, height);
-	    Canvas canvas = skyImage.canvas();
+	    atmosphereImage = PlayN.graphics().createImage(width, height);
+	    Canvas atmosphereCanvas = atmosphereImage.canvas();
 	    float atmosphereRadialOffset = 40.0f;
 	    float atmosphereRadius = state.getPlanetRadius() + atmosphereRadialOffset;
 	    float atmosphereRadiusInPixels = atmosphereRadius * state.getPixelsPerMeter();
-	    canvas.setFillColor(0xff000000);
-	    canvas.fillRect(0, 0, width, height);
+	    atmosphereCanvas.setFillColor(0xff000000);
+	    atmosphereCanvas.fillRect(0, 0, width, height);
 
 	    int[] colors = { 0xff00ccff, 0x00000000 };
 	    float[] colorPositions = { 1.0f - atmosphereRadialOffset / atmosphereRadius, 1.0f };
 	    Gradient gradient = PlayN.graphics().createRadialGradient(0.5f * (float) width,
 	    		0.75f * (float) height + planetRadiusInPixels, atmosphereRadiusInPixels, colors, colorPositions);
-	    canvas.setFillGradient(gradient);
-	    canvas.fillRect(0, 0, width, height);
-	    canvas.setFillGradient(null);
+	    atmosphereCanvas.setFillGradient(gradient);
+	    atmosphereCanvas.fillRect(0, 0, width, height);
+	    atmosphereCanvas.setFillGradient(null);
 	}
 
 	@Override
 	public void exit() {
+		PlayN.keyboard().setListener(null);
 		state.exit();
 	}
 	
 	@Override
 	public void paint(float alpha) {
+		for (ImageLayer treeImageLayer : treeImageLayers) {
+			treeImageLayer.setOrigin(0.5f * (float) treeImage.width(), 0.5f * (float) treeImage.height());
+		}
+		
 		int width = PlayN.graphics().width();
 	    int height = PlayN.graphics().height();
 
-	    Surface surface = layer.surface();
-		surface.clear();
-		surface.drawImage(skyImage, 0, 0);
-		surface.drawImage(planetImage, 0, height - planetImage.height());
+	    Surface atmosphereSurface = atmosphereSurfaceLayer.surface();
+	    atmosphereSurface.clear();
+	    atmosphereSurface.drawImage(atmosphereImage, 0, 0);
+
+	    Surface planetSurface = planetSurfaceLayer.surface();
+	    planetSurface.clear();
+	    planetSurface.drawImage(planetImage, 0, height - planetImage.height());
 
 		state.paint(alpha);
 	}
@@ -89,6 +127,9 @@ public class PlanetScreen implements Screen {
 	@Override
 	public void update(float delta) {
 		state.update(delta);
+		if (state.getAlienShipActor() == null) {
+			game.setScreen(new TitleScreen(game));
+		}
 	}
 
 	private void createTree(float polarPosition) {
@@ -97,13 +138,28 @@ public class PlanetScreen implements Screen {
 		state.getVegetationLayer().add(polarPositionLayer);
 
 		GroupLayer radialPositionLayer = PlayN.graphics().createGroupLayer();
-		radialPositionLayer.setTranslation(0.0f, -(state.getPlanetRadius() + 2.0f + PlayN.random()) * state.getPixelsPerMeter());
+		radialPositionLayer.setTranslation(0.0f, -(state.getPlanetRadius() + 3.0f) * state.getPixelsPerMeter());
 		polarPositionLayer.add(radialPositionLayer);
 
-		Image image = PlayN.assets().getImageSync("images/tree.png");
-		ImageLayer imageLayer = PlayN.graphics().createImageLayer(image);
-		imageLayer.setScale(state.getPixelsPerMeter() * 0.1f);
-		imageLayer.setOrigin((float) image.width() / 2.0f, (float) image.height() / 2.0f);
+		ImageLayer imageLayer = PlayN.graphics().createImageLayer(treeImage);
+		treeImageLayers.add(imageLayer);
+		float scale = state.getPixelsPerMeter() * 0.1f;
+		float scaleX = (PlayN.random() < 0.5f ? -1.0f : 1.0f) * scale;
+		float scaleY = scale;
+		imageLayer.setScale(scaleX, scaleY);
 		radialPositionLayer.add(imageLayer);
+	}
+
+	private void createAnimal(float polarPosition) {
+		AnimalActor.Type type = generateAnimalType();
+		state.addActor(new AnimalActor(state, polarPosition, type));
+	}
+
+	private AnimalActor.Type generateAnimalType() {
+		if (PlayN.random() < 0.5f) {
+			return PlayN.random() < 0.5f ? AnimalActor.Type.COW : AnimalActor.Type.SHEEP;
+		} else {
+			return PlayN.random() < 0.5f ? AnimalActor.Type.HORSE : AnimalActor.Type.PIG;
+		}
 	}
 }

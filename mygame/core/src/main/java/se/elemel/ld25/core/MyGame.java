@@ -1,20 +1,16 @@
 package se.elemel.ld25.core;
 
-import static playn.core.PlayN.*;
-
-import playn.core.Game;
-import playn.core.Image;
-import playn.core.ImageLayer;
-import playn.core.gl.GLContext;
+import playn.core.*;
 
 public class MyGame implements Game {
 	private Screen screen;
+	private ResourceCache resourceCache = new ResourceCache();
 
 	@Override
 	public void init() {
 		// graphics().ctx().setTextureFilter(GLContext.Filter.NEAREST, GLContext.Filter.NEAREST);
 		
-		screen = new PlanetScreen();
+		screen = new TitleScreen(this);
 		screen.init();
 	}
 
@@ -31,5 +27,19 @@ public class MyGame implements Game {
 	@Override
 	public int updateRate() {
 		return 25;
+	}
+
+	public Screen getScreen() {
+		return screen;
+	}
+
+	public void setScreen(Screen screen) {
+		this.screen.exit();
+		this.screen = screen;
+		this.screen.init();
+	}
+
+	public ResourceCache getResourceCache() {
+		return resourceCache;
 	}
 }

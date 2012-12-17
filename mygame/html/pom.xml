@@ -17,7 +17,7 @@
     <gwt.module>se.elemel.ld25.MyGame</gwt.module>
     <gwt.name>mygame</gwt.name>
     <!-- Desired Google App Engine SDK version -->
-    <gae.version>1.6.1</gae.version>
+    <gae.version>1.7.2</gae.version>
   </properties>
 
   <dependencies>
@@ -124,7 +124,7 @@
       <plugin>
         <groupId>net.kindleit</groupId>
         <artifactId>maven-gae-plugin</artifactId>
-        <version>0.9.2</version>
+        <version>0.9.6-SNAPSHOT</version>
         <dependencies>
           <!-- Use explicit dependency on gae-runtime here, so we can specify GAE SDK version -->
           <dependency>
