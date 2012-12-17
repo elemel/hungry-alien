@@ -11,6 +11,7 @@ public class MyGameJava {
 		config.width = 1024;
 		config.height = 576;
 		JavaPlatform platform = JavaPlatform.register(config);
+		platform.setTitle("Hungry Alien");
 		platform.assets().setPathPrefix("se/elemel/ld25/resources");
 		PlayN.run(new MyGame());
 	}
