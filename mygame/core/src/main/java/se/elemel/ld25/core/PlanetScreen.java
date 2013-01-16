@@ -1,7 +1,18 @@
 package se.elemel.ld25.core;
 
-import playn.core.*;
-import java.util.*;
+import java.util.ArrayList;
+
+import playn.core.Canvas;
+import playn.core.CanvasImage;
+import playn.core.Gradient;
+import playn.core.GroupLayer;
+import playn.core.Image;
+import playn.core.ImageLayer;
+import playn.core.Key;
+import playn.core.Keyboard;
+import playn.core.PlayN;
+import playn.core.Surface;
+import playn.core.SurfaceLayer;
 
 public class PlanetScreen implements Screen {
 	private MyGame game;
@@ -110,7 +121,6 @@ public class PlanetScreen implements Screen {
 			treeImageLayer.setOrigin(0.5f * (float) treeImage.width(), 0.5f * (float) treeImage.height());
 		}
 		
-		int width = PlayN.graphics().width();
 	    int height = PlayN.graphics().height();
 
 	    Surface atmosphereSurface = atmosphereSurfaceLayer.surface();

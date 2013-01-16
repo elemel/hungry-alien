@@ -1,6 +1,10 @@
 package se.elemel.ld25.core;
 
-import playn.core.*;
+import playn.core.GroupLayer;
+import playn.core.Image;
+import playn.core.ImageLayer;
+import playn.core.PlayN;
+import playn.core.Sound;
 
 public class BulletActor implements Actor {
 	private GameState state;
@@ -52,7 +56,6 @@ public class BulletActor implements Actor {
 
 		radialVelocity = 3.0f + 3.0f * PlayN.random();
 		float alienShipPolarOffset = state.normalizePolarOffset(state.getAlienShipPolarPosition() - polarPosition);
-		float alienShipPerimeterOffset = alienShipPolarOffset * state.getPlanetRadius();
 		perimeterVelocity = (10.0f + 10.0f * PlayN.random()) * alienShipPolarOffset;
 		if (Math.abs(perimeterVelocity) > maxPerimeterVelocity) {
 			float perimeterVelocitySign = (perimeterVelocity < 0.0f) ? -1.0f : 1.0f;

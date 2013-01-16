@@ -69,7 +69,8 @@ public class VehicleActor implements Actor {
 	@Override
 	public void update(float delta) {
 		float tractorBeamPolarOffset = state.normalizePolarOffset(state.getAlienShipPolarPosition() - polarPosition);
-		if (false && state.isTractorBeamEnabled() &&
+		boolean beamable = false;
+		if (beamable && state.isTractorBeamEnabled() &&
 				Math.abs(tractorBeamPolarOffset * radialPosition) < 0.5f * state.getTractorBeamWidth())
 		{
 			if (radialPosition > state.getAlienShipRadialPosition()) {

@@ -1,12 +1,16 @@
 package se.elemel.ld25.core;
 
-import playn.core.*;
+import playn.core.GroupLayer;
+import playn.core.Image;
+import playn.core.ImageLayer;
+import playn.core.Key;
+import playn.core.PlayN;
+import playn.core.Sound;
 
 public class AlienShipActor implements Actor {
 	private GameState state;
 	private ResourceCache resourceCache;
 	private Image image;
-	private Sound sound;
 	private GroupLayer parentLayer;
 	private GroupLayer polarPositionLayer;
 	private GroupLayer radialPositionLayer;

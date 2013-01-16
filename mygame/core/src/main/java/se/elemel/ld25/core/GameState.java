@@ -46,7 +46,6 @@ public class GameState {
 	}
 
 	public void init() {
-		int width = PlayN.graphics().width();
 	    int height = PlayN.graphics().height();
 
 	    pixelsPerMeter = (float) height / frustumHeight;
